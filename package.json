@@ -22,9 +22,12 @@
   },
   "types": "dist/index.d.ts",
   "dependencies": {
+    "@internetarchive/local-cache": "^0.2.1",
+    "@internetarchive/search-service": "0.3.0-alpha.6",
     "lit": "^2.0.2"
   },
   "devDependencies": {
+    "@internetarchive/result-type": "^0.0.1",
     "@open-wc/eslint-config": "^7.0.0",
     "@open-wc/testing": "^3.0.3",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
