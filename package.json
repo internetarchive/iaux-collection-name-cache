@@ -1,13 +1,13 @@
 {
-  "name": "@internetarchive/your-webcomponent",
-  "description": "The Internet Archive Typescript WebComponent template. It is based on the @open-wc template.",
+  "name": "@internetarchive/collection-name-cache",
+  "description": "A utility to load and cache collection names asynchronously.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/internetarchive/iaux-your-webcomponent.git"
+    "url": "git+https://github.com/internetarchive/iaux-collection-name-cache.git"
   },
   "license": "AGPL-3.0-only",
   "author": "Internet Archive",
-  "version": "0.0.0",
+  "version": "0.0.1-alpha.1",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "scripts": {
