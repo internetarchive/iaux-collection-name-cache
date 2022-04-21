@@ -51,7 +51,7 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
 
   private defaultPruningAge = 1000 * 60 * 60 * 24 * 7;
 
-  private defaultPruningInterval = 1000 * 10;
+  private defaultPruningInterval = 1000 * 30;
 
   private fetchTimeout: number | null = null;
 
@@ -110,10 +110,13 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
 
   private pruningAge = this.defaultPruningAge;
 
+  private maxCacheSize = 2500;
+
   private cacheLoaded = false;
 
   constructor(options: {
     searchService: SearchServiceInterface;
+    maxCacheSize?: number;
     localCache?: LocalCacheInterface;
     loadDelay?: number;
     pruneInterval?: number;
@@ -123,9 +126,10 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
     this.localCache = options.localCache;
     this.loadDelay = options.loadDelay ?? this.defaultLoadDelay;
     this.pruningAge = options.pruningAge ?? this.pruningAge;
+    this.maxCacheSize = options.maxCacheSize ?? this.maxCacheSize;
 
+    this.pruneCache();
     setInterval(async () => {
-      await this.loadFromCache();
       await this.pruneCache();
     }, options.pruneInterval ?? this.defaultPruningInterval);
   }
@@ -208,27 +212,50 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
       }
     }
 
-    await this.localCache?.set({
-      key: this.cacheKeyName,
-      value: this.collectionNameCache,
-      ttl: this.cacheTtl,
-    });
+    await this.persistCache();
   }
 
+  // prune entries from the cache
   async pruneCache(): Promise<void> {
-    // prune old entries from the cache
+    await this.loadFromCache();
+
     const now = Date.now();
 
-    for (const [identifier, storageInfo] of Object.entries(
-      this.collectionNameCache
-    )) {
+    // sorting the keys by lastAccess ascending so we can remove the oldest
+    const sortedCache = Object.entries(this.collectionNameCache).sort(
+      (a, b) => {
+        const aLastAccess = a[1]?.lastAccess ?? 0;
+        const bLastAccess = b[1]?.lastAccess ?? 0;
+        return aLastAccess - bLastAccess;
+      }
+    );
+
+    const identifiersToDelete = new Set<string>();
+    for (const [identifier, storageInfo] of sortedCache) {
       if (!storageInfo) continue;
       const { lastAccess } = storageInfo;
       if (lastAccess < now - this.pruningAge) {
-        delete this.collectionNameCache[identifier];
+        identifiersToDelete.add(identifier);
       }
     }
 
+    // delete oldest identifiers if number is greater than maxCacheSize
+    if (sortedCache.length > this.maxCacheSize) {
+      for (let i = 0; i < sortedCache.length - this.maxCacheSize; i += 1) {
+        const [identifier] = sortedCache[i];
+        identifiersToDelete.add(identifier);
+      }
+    }
+
+    // delete the identifiers from the cache
+    for (const identifier of identifiersToDelete) {
+      delete this.collectionNameCache[identifier];
+    }
+
+    await this.persistCache();
+  }
+
+  private async persistCache(): Promise<void> {
     await this.localCache?.set({
       key: this.cacheKeyName,
       value: this.collectionNameCache,
