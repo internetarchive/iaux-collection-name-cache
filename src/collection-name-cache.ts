@@ -134,6 +134,7 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
   }
 
   private async loadPendingIdentifiers(): Promise<void> {
+    await this.loadFromCache();
     const pendingIdentifiers = this.pendingIdentifierQueue.splice(0, 100);
     if (pendingIdentifiers.length === 0) return;
 
