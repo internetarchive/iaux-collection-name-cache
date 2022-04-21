@@ -43,11 +43,17 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
 
   private cacheTtl = 60 * 60 * 24 * 7;
 
+  private defaultLoadDelay = 100; // ms
+
+  // we want to let identifiers accumulate in the queue before we start
+  // loading them from the search service so this is how long we wait until we start loading
+  private loadDelay = 100; // ms
+
   private defaultPruningAge = 1000 * 60 * 60 * 24 * 7;
 
   private defaultPruningInterval = 1000 * 10;
 
-  private defaultLoadInterval = 250; // ms
+  private fetchTimeout: number | null = null;
 
   /** @inheritdoc */
   async collectionNameFor(identifier: string): Promise<string | null> {
@@ -60,6 +66,8 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
       this.collectionNameCache[lowercaseIdentifier] = cachedName;
       return cachedName.name;
     }
+
+    this.startPendingIdentifierTimer();
 
     return new Promise(resolve => {
       this.pendingIdentifierQueue.add(lowercaseIdentifier);
@@ -84,7 +92,7 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
       if (this.collectionNameCache[identifier]) continue;
       this.pendingIdentifierQueue.add(identifier);
     }
-    await this.loadPendingIdentifiers();
+    this.startPendingIdentifierTimer();
   }
 
   private pendingIdentifierQueue: Set<string> = new Set<string>();
@@ -107,22 +115,27 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
   constructor(options: {
     searchService: SearchServiceInterface;
     localCache?: LocalCacheInterface;
-    loadInterval?: number;
+    loadDelay?: number;
     pruneInterval?: number;
     pruningAge?: number;
   }) {
     this.searchService = options.searchService;
     this.localCache = options.localCache;
+    this.loadDelay = options.loadDelay ?? this.defaultLoadDelay;
     this.pruningAge = options.pruningAge ?? this.pruningAge;
-
-    setInterval(async () => {
-      await this.loadPendingIdentifiers();
-    }, options.loadInterval ?? this.defaultLoadInterval);
 
     setInterval(async () => {
       await this.loadFromCache();
       await this.pruneCache();
     }, options.pruneInterval ?? this.defaultPruningInterval);
+  }
+
+  private async startPendingIdentifierTimer(): Promise<void> {
+    if (this.fetchTimeout) return;
+    this.fetchTimeout = window.setTimeout(() => {
+      this.loadPendingIdentifiers();
+      this.fetchTimeout = null;
+    }, this.loadDelay);
   }
 
   private async loadFromCache(): Promise<void> {

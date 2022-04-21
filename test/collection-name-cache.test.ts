@@ -12,7 +12,7 @@ describe('CollectionNameCache', () => {
     const mockSearchService = new MockSearchService();
     const collectionNameFetcher = new CollectionNameCache({
       searchService: mockSearchService,
-      loadInterval: 50,
+      loadDelay: 50,
     });
 
     await Promise.all([
@@ -37,7 +37,7 @@ describe('CollectionNameCache', () => {
     mockSearchService.searchResult = mockSearchResponse;
     const collectionNameFetcher = new CollectionNameCache({
       searchService: mockSearchService,
-      loadInterval: 50,
+      loadDelay: 50,
     });
 
     const results = await Promise.all([
@@ -56,7 +56,7 @@ describe('CollectionNameCache', () => {
     mockSearchService.searchResult = mockSearchResponseOnlyFoo;
     const collectionNameFetcher = new CollectionNameCache({
       searchService: mockSearchService,
-      loadInterval: 50,
+      loadDelay: 50,
     });
 
     const results = await Promise.all([
@@ -75,7 +75,7 @@ describe('CollectionNameCache', () => {
     mockSearchService.searchResult = mockSearchResponse;
     const collectionNameFetcher = new CollectionNameCache({
       searchService: mockSearchService,
-      loadInterval: 50,
+      loadDelay: 50,
     });
 
     await Promise.all([
@@ -95,7 +95,7 @@ describe('CollectionNameCache', () => {
     mockSearchService.searchResult = mockSearchResponseOnlyFoo;
     const collectionNameFetcher = new CollectionNameCache({
       searchService: mockSearchService,
-      loadInterval: 50,
+      loadDelay: 50,
     });
 
     const results = await Promise.all([
@@ -114,7 +114,7 @@ describe('CollectionNameCache', () => {
     mockSearchService.searchResult = mockSearchResponse;
     const collectionNameFetcher = new CollectionNameCache({
       searchService: mockSearchService,
-      loadInterval: 50,
+      loadDelay: 25,
     });
 
     await collectionNameFetcher.preloadIdentifiers([
@@ -122,6 +122,8 @@ describe('CollectionNameCache', () => {
       'bar-collection',
       'baz-collection',
     ]);
+
+    await promisedSleep(50);
 
     // should have loaded here
     expect(mockSearchService.searchCallCount).to.equal(1);
@@ -146,7 +148,7 @@ describe('CollectionNameCache', () => {
     mockSearchService.searchResult = mockSearchResponse;
     const collectionNameFetcher = new CollectionNameCache({
       searchService: mockSearchService,
-      loadInterval: 50,
+      loadDelay: 25,
     });
 
     await collectionNameFetcher.preloadIdentifiers([
@@ -154,6 +156,8 @@ describe('CollectionNameCache', () => {
       'bar-collection',
       'baz-collection',
     ]);
+
+    await promisedSleep(50);
 
     // should have loaded here
     expect(mockSearchService.searchCallCount).to.equal(1);
@@ -169,7 +173,7 @@ describe('CollectionNameCache', () => {
     mockSearchService.searchResult = mockSearchResponse;
     const collectionNameFetcher = new CollectionNameCache({
       searchService: mockSearchService,
-      loadInterval: 50,
+      loadDelay: 25,
     });
 
     await collectionNameFetcher.preloadIdentifiers([
@@ -178,6 +182,8 @@ describe('CollectionNameCache', () => {
       'baz-collection',
     ]);
 
+    await promisedSleep(50);
+
     // should have loaded here
     expect(mockSearchService.searchCallCount).to.equal(1);
 
@@ -185,6 +191,9 @@ describe('CollectionNameCache', () => {
       'foo-collection',
       'beep-collection',
     ]);
+
+    // the query won't fire until the load delay has passed (25ms) so wait for it
+    await promisedSleep(50);
 
     expect(mockSearchService.searchParams?.query).to.equal(
       'identifier:(beep-collection)'
@@ -199,7 +208,7 @@ describe('CollectionNameCache', () => {
     mockSearchService.searchResult = mockSearchResponse;
     const collectionNameFetcher = new CollectionNameCache({
       searchService: mockSearchService,
-      loadInterval: 50,
+      loadDelay: 25,
       pruneInterval: 20,
       pruningAge: 75,
     });
@@ -209,6 +218,8 @@ describe('CollectionNameCache', () => {
       'bar-collection',
       'baz-collection',
     ]);
+
+    await promisedSleep(50);
 
     expect(mockSearchService.searchCallCount).to.equal(1);
     await promisedSleep(50);
