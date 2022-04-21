@@ -62,7 +62,7 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
     }
 
     return new Promise(resolve => {
-      this.pendingIdentifierQueue.push(lowercaseIdentifier);
+      this.pendingIdentifierQueue.add(lowercaseIdentifier);
       const currentPromises = this.pendingPromises[lowercaseIdentifier] ?? [];
       const resultHandler: CollectionNameResolver = async (
         name: string | null
@@ -82,12 +82,12 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
     );
     for (const identifier of lowercaseIdentifiers) {
       if (this.collectionNameCache[identifier]) continue;
-      this.pendingIdentifierQueue.push(identifier);
+      this.pendingIdentifierQueue.add(identifier);
     }
     await this.loadPendingIdentifiers();
   }
 
-  private pendingIdentifierQueue: string[] = [];
+  private pendingIdentifierQueue: Set<string> = new Set<string>();
 
   private pendingPromises: { [identifier: string]: CollectionNameResolver[] } =
     {};
@@ -135,7 +135,10 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
 
   private async loadPendingIdentifiers(): Promise<void> {
     await this.loadFromCache();
-    const pendingIdentifiers = this.pendingIdentifierQueue.splice(0, 100);
+    const pendingIdentifiers = Array.from(this.pendingIdentifierQueue).splice(
+      0,
+      100
+    );
     if (pendingIdentifiers.length === 0) return;
 
     const searchParams = new SearchParams({
@@ -163,6 +166,7 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
           name: collectionName,
           lastAccess: Date.now(),
         };
+        this.pendingIdentifierQueue.delete(lowercaseIdentifier);
         const currentPromises = this.pendingPromises[lowercaseIdentifier];
         if (currentPromises) {
           for (const promise of currentPromises) {
