@@ -140,6 +140,9 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
       100
     );
     if (pendingIdentifiers.length === 0) return;
+    pendingIdentifiers.map(async identifier =>
+      this.pendingIdentifierQueue.delete(identifier)
+    );
 
     const searchParams = new SearchParams({
       query: `identifier:(${pendingIdentifiers.join(' OR ')})`,
@@ -166,7 +169,6 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
           name: collectionName,
           lastAccess: Date.now(),
         };
-        this.pendingIdentifierQueue.delete(lowercaseIdentifier);
         const currentPromises = this.pendingPromises[lowercaseIdentifier];
         if (currentPromises) {
           for (const promise of currentPromises) {
