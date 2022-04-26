@@ -85,9 +85,9 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
   /** @inheritdoc */
   async preloadIdentifiers(identifiers: string[]): Promise<void> {
     if (!this.cacheLoaded) await this.loadFromCache();
-    const lowercaseIdentifiers = identifiers.map(identifier =>
-      identifier.toLowerCase()
-    );
+    const lowercaseIdentifiers = identifiers
+      .filter(element => element !== undefined)
+      .map(identifier => identifier.toLowerCase());
     for (const identifier of lowercaseIdentifiers) {
       if (this.collectionNameCache[identifier]) continue;
       this.pendingIdentifierQueue.add(identifier);
