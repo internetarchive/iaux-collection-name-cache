@@ -127,10 +127,10 @@
   resolved "https://registry.yarnpkg.com/@internetarchive/result-type/-/result-type-0.0.1.tgz#a1bda4428dc557cc644a67783f1b8d5944ae4d54"
   integrity sha512-sWahff5oP1xAK1CwAu1/5GTG2RXsdx/sQKn4SSOWH0r0vU2QoX9kAom/jSXeBsmgK0IjTc+9Ty9407SMORi+nQ==
 
-"@internetarchive/search-service@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@internetarchive/search-service/-/search-service-0.3.1.tgz#83969dda76f68ebf88a3b32e09342bbf85355f6b"
-  integrity sha512-uP+cUR7gFh2Aye46HQPqFAke3vmNZa7ZCPcaLG2qhUraY5hYI5RCFSYifCRqRdqIFg8DZbmyKFdZrIQVsGe26Q==
+"@internetarchive/search-service@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@internetarchive/search-service/-/search-service-0.3.2.tgz#dde9eeb439ff600b1a1a21c205bea2d23be5b41a"
+  integrity sha512-6HlHbsFfhWs7XKKKUsE5oIClwDhHkn3yr3B4GEbEmz7p8gaTQDq2WfHmrzmvGN8My3uNlVS2Fs4F5PRw1EGogw==
   dependencies:
     "@internetarchive/field-parsers" "^0.1.3"
     "@internetarchive/result-type" "^0.0.1"
