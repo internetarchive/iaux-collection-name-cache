@@ -1,9 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-continue */
-import {
-  SearchParams,
-  SearchServiceInterface,
-} from '@internetarchive/search-service';
+import type { SearchServiceInterface } from '@internetarchive/search-service';
 import { LocalCacheInterface } from '@internetarchive/local-cache';
 
 /**
@@ -161,11 +158,11 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
       this.pendingIdentifierQueue.delete(identifier)
     );
 
-    const searchParams = new SearchParams({
+    const searchParams = {
       query: `identifier:(${pendingIdentifiers.join(' OR ')})`,
       fields: ['title', 'identifier'],
       rows: pendingIdentifiers.length,
-    });
+    };
 
     const results = await this.searchService.search(searchParams);
     const docs = results.success?.response?.docs;
