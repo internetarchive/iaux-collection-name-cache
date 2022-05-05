@@ -23,7 +23,7 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "@internetarchive/local-cache": "^0.2.1",
-    "@internetarchive/search-service": "^0.3.3",
+    "@internetarchive/search-service": "^0.3.4",
     "lit": "^2.0.2"
   },
   "devDependencies": {
