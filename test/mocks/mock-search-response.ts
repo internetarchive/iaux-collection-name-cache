@@ -1,36 +1,39 @@
-import { Metadata, SearchResponse } from '@internetarchive/search-service';
-import { SearchServiceError } from '@internetarchive/search-service/dist/src/search-service-error';
-import { Result } from '@internetarchive/result-type';
+import { ItemHit, SearchResponse } from '@internetarchive/search-service';
+import type { SearchServiceError } from '@internetarchive/search-service/dist/src/search-service-error';
+import type { Result } from '@internetarchive/result-type';
 
 export const mockSearchResponse: Result<SearchResponse, SearchServiceError> = {
   success: {
+    request: {
+      clientParameters: {},
+      finalizedParameters: {},
+    },
     responseHeader: {
-      status: 0,
-      QTime: 0,
-      params: {
-        query: '',
-        qin: '',
-        fields: '',
-        start: 0,
-        wt: '',
-      },
+      succeeded: true,
+      query_time: 0,
     },
     rawResponse: {},
     response: {
-      numFound: 3,
-      start: 0,
-      docs: [
-        new Metadata({
-          identifier: 'foo-collection',
-          title: 'Foo Collection',
+      totalResults: 3,
+      returnedCount: 3,
+      results: [
+        new ItemHit({
+          fields: {
+            identifier: 'foo-collection',
+            title: 'Foo Collection',
+          },
         }),
-        new Metadata({
-          identifier: 'bar-collection',
-          title: 'Bar Collection',
+        new ItemHit({
+          fields: {
+            identifier: 'bar-collection',
+            title: 'Bar Collection',
+          },
         }),
-        new Metadata({
-          identifier: 'baz-collection',
-          title: 'Baz Collection',
+        new ItemHit({
+          fields: {
+            identifier: 'baz-collection',
+            title: 'Baz Collection',
+          },
         }),
       ],
     },
@@ -42,25 +45,24 @@ export const mockSearchResponseOnlyFoo: Result<
   SearchServiceError
 > = {
   success: {
+    request: {
+      clientParameters: {},
+      finalizedParameters: {},
+    },
     responseHeader: {
-      status: 0,
-      QTime: 0,
-      params: {
-        query: '',
-        qin: '',
-        fields: '',
-        start: 0,
-        wt: '',
-      },
+      succeeded: true,
+      query_time: 0,
     },
     rawResponse: {},
     response: {
-      numFound: 3,
-      start: 0,
-      docs: [
-        new Metadata({
-          identifier: 'foo-collection',
-          title: 'Foo Collection',
+      totalResults: 3,
+      returnedCount: 1,
+      results: [
+        new ItemHit({
+          fields: {
+            identifier: 'foo-collection',
+            title: 'Foo Collection',
+          },
         }),
       ],
     },

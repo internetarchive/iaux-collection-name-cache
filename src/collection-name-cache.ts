@@ -164,13 +164,13 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
       rows: pendingIdentifiers.length,
     };
 
-    const results = await this.searchService.search(searchParams);
-    const docs = results.success?.response?.docs;
+    const searchResponse = await this.searchService.search(searchParams);
+    const results = searchResponse.success?.response?.results;
 
     // first process the identifiers that were received from the search service
     // and remove them from the pendingIdentifierQueue
-    if (docs && docs.length > 0) {
-      for (const result of docs) {
+    if (results && results.length > 0) {
+      for (const result of results) {
         const { identifier, title } = result;
         if (!identifier) continue;
         const lowercaseIdentifier = identifier.toLowerCase();
