@@ -162,6 +162,7 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
       query: `identifier:(${pendingIdentifiers.join(' OR ')})`,
       fields: ['title', 'identifier'],
       rows: pendingIdentifiers.length,
+      aggregations: { omit: true },
     };
 
     const searchResponse = await this.searchService.search(searchParams);
