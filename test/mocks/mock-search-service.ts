@@ -1,6 +1,5 @@
 import { Result } from '@internetarchive/result-type';
 import {
-  MetadataResponse,
   SearchParams,
   SearchResponse,
   SearchServiceInterface,
@@ -12,10 +11,6 @@ export class MockSearchService implements SearchServiceInterface {
 
   searchCallCount = 0;
 
-  fetchMetadataIdentifier?: string;
-
-  fetchMatadataValues?: [identifier: string, keypath: string];
-
   searchResult?: Result<SearchResponse, SearchServiceError>;
 
   search(
@@ -24,20 +19,5 @@ export class MockSearchService implements SearchServiceInterface {
     this.searchParams = params;
     this.searchCallCount += 1;
     return Promise.resolve(this.searchResult ?? { success: undefined });
-  }
-
-  fetchMetadata(
-    identifier: string
-  ): Promise<Result<MetadataResponse, SearchServiceError>> {
-    this.fetchMetadataIdentifier = identifier;
-    return Promise.resolve({ success: undefined });
-  }
-
-  fetchMetadataValue<T>(
-    identifier: string,
-    keypath: string
-  ): Promise<Result<T, SearchServiceError>> {
-    this.fetchMatadataValues = [identifier, keypath];
-    return Promise.resolve({ success: undefined });
   }
 }
