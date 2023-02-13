@@ -7,7 +7,7 @@
   },
   "license": "AGPL-3.0-only",
   "author": "Internet Archive",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "@internetarchive/local-cache": "^0.2.1",
-    "@internetarchive/search-service": "^0.4.7-alpha.1",
+    "@internetarchive/search-service": "^0.4.7",
     "lit": "^2.0.2"
   },
   "devDependencies": {
