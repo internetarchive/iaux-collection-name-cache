@@ -339,4 +339,41 @@ describe('CollectionNameCache', () => {
       mockLocalCache.storage['collection-name-cache']['baz-collection'].name
     ).to.equal('Baz Collection');
   });
+
+  it('adds known titles to the cache', async () => {
+    const mockSearchService = new MockSearchService();
+    mockSearchService.searchResult = mockSearchResponse;
+    const collectionNameCache = new CollectionNameCache({
+      searchService: mockSearchService,
+      loadDelay: 25,
+    });
+
+    // fill the cache with some already-known collection titles
+    await collectionNameCache.addKnownTitles({
+      'foo-collection': 'Foo Collection',
+      'bar-collection': 'Bar Collection',
+      'baz-collection': 'Baz Collection',
+    });
+
+    // should immediately have them available in the cache
+    expect(
+      await collectionNameCache.collectionNameFor('foo-collection')
+    ).to.equal('Foo Collection');
+    expect(
+      await collectionNameCache.collectionNameFor('bar-collection')
+    ).to.equal('Bar Collection');
+    expect(
+      await collectionNameCache.collectionNameFor('baz-collection')
+    ).to.equal('Baz Collection');
+
+    await promisedSleep(50);
+
+    // should not have tried to fetch any titles
+    expect(mockSearchService.searchCallCount).to.equal(0);
+
+    await collectionNameCache.preloadIdentifiers(['foo-collection']);
+
+    // again, no fetch call should be made, since we already have it cached
+    expect(mockSearchService.searchCallCount).to.equal(0);
+  });
 });
