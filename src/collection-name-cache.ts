@@ -23,6 +23,14 @@ export interface CollectionNameCacheInterface {
    * @param identifiers
    */
   preloadIdentifiers(identifiers: string[]): Promise<void>;
+
+  /**
+   * Adds a set of known identifier-title mappings to the cache,
+   * without sending a request for them.
+   *
+   * @param identifierTitleMap
+   */
+  addKnownTitles(identifierTitleMap: Record<string, string>): Promise<void>;
 }
 
 // this is the callback type received after the name is fetched
@@ -90,6 +98,22 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
       this.pendingIdentifierQueue.add(identifier);
     }
     this.startPendingIdentifierTimer();
+  }
+
+  /** @inheritdoc */
+  async addKnownTitles(
+    identifierTitleMap: Record<string, string>
+  ): Promise<void> {
+    if (!this.cacheLoaded) await this.loadFromCache();
+    Object.entries(identifierTitleMap).forEach(([identifier, title]) => {
+      const lowercaseIdentifier = identifier.toLowerCase();
+      this.collectionNameCache[lowercaseIdentifier] = {
+        name: title,
+        lastAccess: Date.now(),
+      };
+    });
+
+    await this.persistCache();
   }
 
   private pendingIdentifierQueue: Set<string> = new Set<string>();
