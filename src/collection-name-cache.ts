@@ -60,8 +60,11 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
 
   private fetchTimeout: number | null = null;
 
+  private addKnownTitlesComplete: Promise<void> = Promise.resolve();
+
   /** @inheritdoc */
   async collectionNameFor(identifier: string): Promise<string | null> {
+    await this.addKnownTitlesComplete; // Must wait for any pending known title additions
     if (!this.cacheLoaded) await this.loadFromCache();
     const lowercaseIdentifier = identifier.toLowerCase();
     const cachedName = this.collectionNameCache[lowercaseIdentifier];
@@ -89,6 +92,7 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
 
   /** @inheritdoc */
   async preloadIdentifiers(identifiers: string[]): Promise<void> {
+    await this.addKnownTitlesComplete; // Must wait for any pending known title additions
     if (!this.cacheLoaded) await this.loadFromCache();
     const lowercaseIdentifiers = identifiers
       .filter(element => element !== undefined)
@@ -104,6 +108,10 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
   async addKnownTitles(
     identifierTitleMap: Record<string, string>
   ): Promise<void> {
+    let completeResolver!: () => void;
+    this.addKnownTitlesComplete = new Promise(res => {
+      completeResolver = res;
+    });
     if (!this.cacheLoaded) await this.loadFromCache();
     Object.entries(identifierTitleMap).forEach(([identifier, title]) => {
       const lowercaseIdentifier = identifier.toLowerCase();
@@ -114,6 +122,7 @@ export class CollectionNameCache implements CollectionNameCacheInterface {
     });
 
     await this.persistCache();
+    completeResolver();
   }
 
   private pendingIdentifierQueue: Set<string> = new Set<string>();
