@@ -7,9 +7,10 @@
   },
   "license": "AGPL-3.0-only",
   "author": "Internet Archive",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "main": "dist/index.js",
   "module": "dist/index.js",
+  "type": "module",
   "scripts": {
     "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\"",
     "build": "tsc",
