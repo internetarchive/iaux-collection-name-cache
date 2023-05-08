@@ -1,6 +1,6 @@
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { CollectionNameCacheInterface } from './collection-name-cache';
+import type { CollectionNameCacheInterface } from './collection-name-cache.js';
 
 @customElement('async-collection-name')
 export class AsyncCollectionName extends LitElement {
