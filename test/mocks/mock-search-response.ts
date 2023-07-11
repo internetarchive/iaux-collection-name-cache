@@ -5,8 +5,14 @@ import type { Result } from '@internetarchive/result-type';
 export const mockSearchResponse: Result<SearchResponse, SearchServiceError> = {
   success: {
     request: {
+      kind: 'hits',
       clientParameters: {},
-      finalizedParameters: {},
+      backendRequests: {
+        primary: {
+          kind: 'hits',
+          finalized_parameters: {},
+        },
+      },
     },
     responseHeader: {
       succeeded: true,
@@ -46,8 +52,14 @@ export const mockSearchResponseOnlyFoo: Result<
 > = {
   success: {
     request: {
+      kind: 'hits',
       clientParameters: {},
-      finalizedParameters: {},
+      backendRequests: {
+        primary: {
+          kind: 'hits',
+          finalized_parameters: {},
+        },
+      },
     },
     responseHeader: {
       succeeded: true,
