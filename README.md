@@ -1,7 +1,7 @@
 ![Build Status](https://github.com/internetarchive/iaux-typescript-wc-template/actions/workflows/ci.yml/badge.svg)
 
-<h1>This package is deprecated.</h1>
-<h2>It is no longer recommended to fetch collection titles via sidecar requests or cache them locally in this way. Other iaux components now simply rely on collection titles being provided alongside the other content that requires them (e.g., search results).</h2>
+# This package is deprecated.
+### It is no longer recommended to fetch collection titles via sidecar requests or cache them locally in this way. Other iaux components now simply rely on collection titles being provided alongside the other content that requires them (e.g., search results).
 <hr>
 
 # Internet Archive Typescript WebComponent Template
